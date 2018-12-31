@@ -1,0 +1,57 @@
+This is a small python script to calculate loudspeaker sound power and
+directivity index.
+
+Usage:
+	calculate_sound_power.py [OPTION...]
+
+Options:
+	--interval=n         measurement interval in degrees (default: 15)
+	--di-offset=n        DI curve offset in dB (default: 50)
+	--mirror-horizontal  use only positive angles for horizontal orbit
+	--mirror-vertical    use only positive angles for vertical orbit
+	-h, --help           show this help
+
+All input files must have the same number of data points and use the same
+frequencies. No interpolation is done. The expected format is:
+
+	[* Comment]
+	<freq_Hz> <magnitude_dB>
+
+Everything after <magnitude_dB> (usually just phase) is ignored. Files
+from Room EQ Wizard work (use "Export measurement as text").
+
+Frequency responses must be named {h,v}<angle>.txt. 0° and 180° responses are
+only read from the set of horizontal responses since the vertical ones would be
+the same.
+
+The listening axis response must be named listening_axis.txt. This could just
+be a duplicate of one of the other files, or could be the listening window
+instead. If the listening axis response is not provided, the DI will not be
+calculated.
+
+You can specify a correction to apply to all files with correction.txt.
+
+The output files are as follows:
+	corrected_listening_axis.txt   -- same as listening_axis.txt if
+	                                  correction.txt does not exist.
+	sound_power.txt                -- total radiated sound power
+	directivity_index.txt          -- directivity index
+
+Here's a Gnuplot script to produce a nice graph from the output files:
+
+set logscale x
+set xtics autofreq
+set ytics 10
+set mxtics default
+set mytics 5
+set grid xtics ytics mxtics mytics
+set xlabel "Frequency (Hz)"
+set ylabel "Sound Pressure Level (dB ref 20µPa)"
+set datafile commentschars '*'
+set term pngcairo size 1024,768 font 'Dejavu Sans, 10'
+set output 'sound_power.png'
+
+plot [20:20000] [50:100] \
+	'corrected_listening_axis.txt' using 1:2 title 'Listening Axis'    with lines, \
+	'sound_power.txt'              using 1:2 title 'Total Sound Power' with lines, \
+	'directivity_index.txt'        using 1:2 title 'Directivity Index' with lines
