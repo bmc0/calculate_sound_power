@@ -47,20 +47,23 @@ def write_power_spectrum(filename, freqs, power_spectrum):
 		for i in range(0, len(power_spectrum)):
 			w.writerow([freqs[i], 10.0 * math.log10(power_spectrum[i]), 0.0])
 
-interval     = 15.
-di_offset_db = 50.
-mirror_horiz = False
-mirror_vert  = False
+default_interval     = 10.
+default_di_offset_db = 50.
 
 def usage():
 	print("Usage: {0:s} [OPTION...]".format(sys.argv[0]))
 	print("")
 	print("Options:")
-	print("    --interval=n         measurement interval in degrees (default: {0:g})".format(interval))
-	print("    --di-offset=n        DI curve offset in dB (default: {0:g})".format(di_offset_db))
+	print("    --interval=n         measurement interval in degrees (default: {0:g})".format(default_interval))
+	print("    --di-offset=n        DI curve offset in dB (default: {0:g})".format(default_di_offset_db))
 	print("    --mirror-horizontal  use only positive angles for horizontal orbit")
 	print("    --mirror-vertical    use only positive angles for vertical orbit")
 	print("    -h, --help           show this help")
+
+interval = default_interval
+di_offset_db = default_di_offset_db
+mirror_horiz = False
+mirror_vert = False
 
 try:
 	optlist, args = getopt.gnu_getopt(sys.argv[1:], "h", ["interval=", "di-offset=", "mirror-horizontal", "mirror-vertical", "help"])
