@@ -48,25 +48,22 @@ def write_power_spectrum(filename, freqs, power_spectrum):
 			w.writerow([freqs[i], 10.0 * math.log10(power_spectrum[i]), 0.0])
 
 default_interval     = 10.
-default_di_offset_db = 50.
 
 def usage():
 	print("Usage: {0:s} [OPTION...]".format(sys.argv[0]))
 	print("")
 	print("Options:")
 	print("    --interval=n         measurement interval in degrees (default: {0:g})".format(default_interval))
-	print("    --di-offset=n        DI curve offset in dB (default: {0:g})".format(default_di_offset_db))
 	print("    --mirror-horizontal  use only positive angles for horizontal orbit")
 	print("    --mirror-vertical    use only positive angles for vertical orbit")
 	print("    -h, --help           show this help")
 
 interval = default_interval
-di_offset_db = default_di_offset_db
 mirror_horiz = False
 mirror_vert = False
 
 try:
-	optlist, args = getopt.gnu_getopt(sys.argv[1:], "h", ["interval=", "di-offset=", "mirror-horizontal", "mirror-vertical", "help"])
+	optlist, args = getopt.gnu_getopt(sys.argv[1:], "h", ["interval=", "mirror-horizontal", "mirror-vertical", "help"])
 except getopt.GetoptError as e:
 	print("error: " + str(e))
 	usage()
@@ -77,8 +74,6 @@ for o, a in optlist:
 		sys.exit()
 	elif o == "--interval":
 		interval = float(a)
-	elif o == "--di-offset":
-		di_offset_db = float(a)
 	elif o == "--mirror-horizontal":
 		mirror_horiz = True
 	elif o == "--mirror-vertical":
@@ -142,7 +137,6 @@ else:
 	for i in range(0, len(power_spectrum)):
 		listening_axis[i] = math.pow(10.0, listening_axis[i] / 10.0)
 	write_power_spectrum("corrected_listening_axis.txt", freqs, listening_axis)
-	di_offset = math.pow(10.0, float(di_offset_db) / 10.0)
 	for i in range(0, len(power_spectrum)):
-		listening_axis[i] = listening_axis[i] / power_spectrum[i] * di_offset
+		listening_axis[i] = listening_axis[i] / power_spectrum[i]
 	write_power_spectrum("directivity_index.txt", freqs, listening_axis)

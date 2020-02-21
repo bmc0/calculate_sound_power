@@ -54,4 +54,4 @@ set output 'sound_power.png'
 plot [20:20000] [50:100] \
 	'corrected_listening_axis.txt' using 1:2 title 'Listening Axis'    with lines, \
 	'sound_power.txt'              using 1:2 title 'Total Sound Power' with lines, \
-	'directivity_index.txt'        using 1:2 title 'Directivity Index' with lines
+	'directivity_index.txt'        using 1:($2+50) title 'Directivity Index' with lines
